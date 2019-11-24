@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "start": "es-dev-server --open",
+    "start:webpack": "webpack-dev-server --open"
+  },
+  "dependencies": {
+    "es-dev-server": "^1.26.1",
+    "html-webpack-plugin": "^3.2.0",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.9.0"
+  }
+}

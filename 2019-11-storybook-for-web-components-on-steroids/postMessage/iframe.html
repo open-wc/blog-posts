@@ -1,0 +1,20 @@
+<body>
+  <h1>Please select a demo by clicking in the menu</h1>
+</body>
+
+<script>
+  // Demo One
+  if (window.location.href.indexOf('demo-one') !== -1) {
+    document.body.innerHTML = '<h1>Hey there from demo two</h1>';
+  }
+  // Demo Two
+  if (window.location.href.indexOf('demo-two') !== -1) {
+    document.body.innerHTML = '<h1>I am demo two</h1>';
+  }
+
+  // register demos when not currently showing a demo
+  if (window.location.href.indexOf('slug') === -1) {
+    parent.postMessage({ name: 'Demo One', slug: 'demo-one' });
+    parent.postMessage({ name: 'Demo Two', slug: 'demo-two' });
+  }
+</script>
