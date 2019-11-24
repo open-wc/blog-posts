@@ -1,0 +1,44 @@
+## editors
+/.idea
+/.vscode
+
+## system files
+.DS_Store
+
+## code coverage folders
+coverage/
+
+## npm
+node_modules
+!packages/es-dev-server/test/**/node_modules
+npm-debug.log
+yarn-error.log
+
+## lerna
+lerna-debug.log
+
+## temp folders
+/.tmp/
+
+## build hp
+/_site/
+
+## we prefer yarn.lock
+package-lock.json
+## lock files in packages we do not need to save
+packages/*/yarn.lock
+
+## build output
+dist
+build-stats.json
+stats.html
+.rpt2_cache
+
+## we already store snapshots globally
+packages/**/__snapshots__
+
+## browserstack
+local.log
+
+## generated codelabs
+docs/.vuepress/public/codelabs
