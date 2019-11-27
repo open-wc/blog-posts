@@ -64,7 +64,61 @@ To get an idea about why this might be needed we first need to understand some o
 Let's assume we are a startup and we are creating a new app.
 Our choice of technology is vue. We happily start building our app and soon we see the need of having a demo system to show and work on all these individual components. Go forth they said and we built a demo system for vue.
 
-::TODO: make vue demo::
+It could look something like this
+
+```html
+<template>
+  <div class="hello">
+    <h1>{{ msg }}</h1>
+    <ul>
+      <li v-for="demo in demos" v-on:click="showDemo(demo.name)">{{demo.name}}</li>
+    </ul>
+
+    <div v-html="demo"></div>
+  </div>
+</template>
+
+<script>
+  export default {
+    name: 'HelloWorld',
+    props: {
+      msg: {
+        type: String,
+        default: 'My Demo System',
+      },
+      demos: {
+        type: Array,
+        default: () => [
+          { name: 'Demo One', content: '<h1>Hey there from demo one</h1>' },
+          { name: 'Demo Two', content: '<h1>I am demo two</h1>' },
+        ],
+      },
+    },
+    methods: {
+      showDemo: function(name) {
+        this.demoIndex = this.demos.findIndex(el => el.name === name);
+      },
+    },
+    data() {
+      return {
+        demoIndex: -1,
+      };
+    },
+    computed: {
+      demo() {
+        if (this.demoIndex >= 0) {
+          return this.demos[this.demoIndex].content;
+        }
+        return '<h1>Please select a demo by clicking in the menu</h1>';
+      },
+    },
+  };
+</script>
+```
+
+> The code here shows only the most relevant information
+> For a demo and more details look in the [vue-demo-system](./vue-demo-system) folder
+> You can start it via `npm i && npm run serve`
 
 Everything works, everyone is happy - life is good.
 
