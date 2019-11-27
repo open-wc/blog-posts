@@ -17,7 +17,7 @@ The support for web components has always been good (via `@storybook/polymer`) a
 
 There are however some parts in storybook which are not fine-tuned for developing web components (the open-wc way).
 
-Let's look at some of those points an how we can improve them.
+Let's look at some of those points and how we can improve them.
 
 After a [typical setup](http://putlink) a workflow looks like this.
 
@@ -59,7 +59,7 @@ So why there are 2 builds?
 
 To get an idea about why this might be needed we first need to understand some of the requirements of a universal demo system like storybook.
 
-### Excursion universal demo system
+## Excursion universal demo system
 
 Let's assume we are a startup and we are creating a new app.
 Our choice of technology is vue. We happily start building our app and soon we see the need of having a demo system to show and work on all these individual components. Go forth they said and we built a demo system for vue.
@@ -68,20 +68,20 @@ Our choice of technology is vue. We happily start building our app and soon we s
 
 Everything works, everyone is happy - life is good.
 
-Fast forward 12 month and we got a new CIO. A new wind is blowing and with it - the prosperous opportunity to work on a second app.
-The bries however demands that this time it is written in Angular. No, problem - we are professionals and off we go working on the new app.
+Fast forward 12 months and we got a new CIO. A new wind is blowing and with it a prosperous opportunity to work on a second app.
+The breeze however demands that this time it is written in Angular. No, problem - we are professionals and off we go working on the new app.
 Pretty early we see a similar pattern as before - components everywhere and we need a way to work and demo them individually.
 Ah we think that's easy we already have a system for that 😬
 We give our best - but the angular components just don't wanna work well together with the vue demo app 😭.
 
 What can we do? Do we really need to recreate the demo system for Angular now?
 
-It seems our issue is that having the demo UI and the component demo on the same page results that we can only use the demo UI system.
+It seems our issue is that having the demo UI and the component demo on the same page has the unwanted side effect that we can only use the UI system within our demos.
 Not very universal that is 😅
 Could we split the UI and the demo?
 
 How about using iframes and only communicate via postMessage?
-Would that mean each windows can do what they like? 🤞
+Would that mean each windows can do what they want? 🤞
 
 Let's make a simple POC (Prove of Concept) with
 
@@ -143,24 +143,24 @@ Here is the `iframe.html`
 > For a demo and more details look in the [postMessage](./postMessage) folder
 > You can start it via `npm i && npm run start`
 
-Now imagine that the UI is way more then just a ul/li list and that the demo follows a certain demo format?
+Now imagine that the UI is way more than just a ul/li list and that the demo follows a certain demo format?
 Could this be a system which allows the UI and the demo to be written in completely different technologies?
 
 The answer is YES 💪
 
 The only means of communication is done via postMessages.
-Therefore the preview only needs to know which postMessage to send and as those are native js every framework or system can use them.
+Therefore the preview only needs to know which postMessage format to use.
+Also postMessage is a native function so every framework or system can use them.
 
 ### Two builds (continued)
 
-The above concept is what is used by storybook which means that there are actually 2 applications being run. One is the storybook UI (called manager) and one is your actual demo (called preview). Knowing that it makes sense that there are 2 separate builds.
+The above concept is what is used by storybook - which means that there are actually 2 applications being run.
+One is the storybook UI (called manager) and one is your actual demo (called preview).
+Knowing that it makes sense that there are 2 separate builds.
 
-But why is there a build step at all?
+But why is there a build step at all? Why would storybook have such setup?
 
-1. compiling the preview to es5 makes sure that it runs in every browser (e.g. we ship the same code to all browsers)
-2. the manager can be configured with different settings or addons
-
-However, shipping es5 code to a modern browser increases the bundle size unnecessarily and can make debugging more complicated in certain cases.
+Let's see what is needed to allow for some code to be run and worked on in multiple browsers.
 
 ### Excursion shipping code based on browser capabilities
 
@@ -187,7 +187,7 @@ export class MyClass {
 
 We deliberately put a debugger breakpoint in there to see the actual code the browser is executing.
 
-Lets see how webpack with a few babel plugins handles it. ([see full config](./EsDevServer-vs-WebpackDevServer/webpack.config.js))
+Let's see how webpack with a few babel plugins handles it. ([see full config](./EsDevServer-vs-WebpackDevServer/webpack.config.js))
 
 ```js
 __webpack_require__.r(__webpack_exports__);
@@ -226,7 +226,7 @@ Wow that is quite some code 🙈 and it does not really look like the code writt
 
 what happens? in a typical webpack & babel setup your code gets compiled down to es5 in order to be able to run the code also on older browser like IE11.
 
-However you may ask how often do I actually run my app in an older browser?
+However, you may ask how often do I actually run my app in an older browser?
 
 A typical developer should probably develop ~90% on a modern browser and ~10% on older browsers to make sure everything still works in order.
 At least we hope you have such a nice workflow 🤗
@@ -234,7 +234,7 @@ At least we hope you have such a nice workflow 🤗
 So the question is why compile, ship, debug and work with this "strange" code 100% of the time if it's only needed for 10%?
 Could we do better?
 
-Lets see how `es-dev-server` handles it by opening the same file on chrome.
+Let's see how `es-dev-server` handles it by opening the same file on chrome.
 
 ```js
 export class MyClass {
@@ -250,7 +250,7 @@ export class MyClass {
 It looks exactly as the original code - because it is. The code as is was fully capable to run in chrome without any adjustments.
 And that's what is happening it ships the source as is.
 
-However we are using private class fields an unsupported feature by for example Firefox.
+However, we are using private class fields which is an unsupported feature for example on Firefox.
 What happens if we open it there?
 
 it fails 😭
@@ -259,7 +259,9 @@ it fails 😭
 
 ok, it's our fault as we are using a stage 3 feature and are not doing any compilation now.
 
-so let's do `es-dev-server --babel` which now uses the same `.babelrc` as webpack.
+Let's try it with `es-dev-server --babel` which in turn will use the same `.babelrc` as webpack.
+
+The following code will be generated.
 
 ```js
 function _classPrivateFieldGet(receiver, privateMap) {
@@ -290,10 +292,10 @@ export class MyClass {
 var _privateField = new WeakMap();
 ```
 
-So now it work 💪
-It only compiles the private fields and not everything 👍
+And it works 💪
+It only compiles the private fields and not everything 👌
 
-However if you now go back to chrome you will see that it is now compiled there as well...
+However, if you now go back to chrome you will see that it is now compiled there as well...
 
 To summarize in order to be able to work and debug code in all the browser we want to support we basically have 2 options.
 
@@ -311,16 +313,17 @@ Note: You can even open it in IE11 and it will look like a lot more code but it 
 
 ### Sourcemaps
 
-Luckily in most cases, you will not see the raw es5 code as storybook/webpack does a good job of providing sourcemaps.
-[Sourcemaps](https://blog.teamtreehouse.com/introduction-source-maps) are a way to show the original code even though the browser actually executes something else.
+Luckily in most cases, even when working with compiled code you will see the source code.
+How is that possible? It's all thanks to [Sourcemaps](https://blog.teamtreehouse.com/introduction-source-maps).
+They are a way to map the original code to the compiled code and browser are smart enough to link them together and only show you what you are interested in.
+As long as the option "Enable JavaScript source maps" is checked in your dev tools.
 
-It is really awesome that it justs works. It is however yet another moving part that may break or you need to know about at least.
-
-So the question is why not just ship the source if the browser understands it?
+It is really awesome that it justs works. It is however yet another moving part that may break or you need to know about it at least.
 
 ## Opportunity
 
 So looking at compilation and shipping of modern code we a window of an opportunity.
+We want to have the features of storybook but we also want to have the ease of use of not relying on webpack.
 
 In short, the idea is to marry storybook ui with es-dev-server.
 
@@ -419,17 +422,18 @@ For more details on how the different versions are shipped from a static server 
 
 We did it 💪
 
-A fully featured demo system that
+A fully-featured demo system that
 
-- is buildless on modern browsers
-- starts up lightning fast
+- is build less on modern browsers
+- starts up lightning-fast
 - has a prebuilt UI (in es5)
 - serves preview code based on browser capabilities
+- uses `es-dev-server` under the hood so you can use all it's features
 
-And above all it's just wonderful to see how a complete separate server can still power storybook.
+And above all, it's just wonderful to see how a completely separate server can power storybook.
 The storybook setup is really worth it 👍
 
-PS: it's not all roses and rainbows but with that step we now know that it is possible - further improvements like a smaller preview bundle or seprate packages for the mdx transformation will happen at some point 🤗
+PS: it's not all roses and rainbows but with that step, we now know that it is possible - further improvements like a smaller preview bundle or separate packages for the mdx transformation will happen at some point 🤗
 
 #### Future
 
