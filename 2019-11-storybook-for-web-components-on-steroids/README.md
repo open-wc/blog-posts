@@ -123,7 +123,7 @@ It could look something like this
 Everything works, everyone is happy - life is good.
 
 Fast forward 12 months and we got a new CIO. A new wind is blowing and with it a prosperous opportunity to work on a second app.
-The breeze however demands that this time it is written in Angular. No, problem - we are professionals and off we go working on the new app.
+The breeze, however, demands that this time it is written in Angular. No, problem - we are professionals and off we go working on the new app.
 Pretty early we see a similar pattern as before - components everywhere and we need a way to work and demo them individually.
 Ah we think that's easy we already have a system for that 😬
 We give our best - but the angular components just don't wanna work well together with the vue demo app 😭.
@@ -135,7 +135,7 @@ Not very universal that is 😅
 Could we split the UI and the demo?
 
 How about using iframes and only communicate via postMessage?
-Would that mean each windows can do what they want? 🤞
+Would that mean each window can do what they want? 🤞
 
 Let's make a simple POC (Prove of Concept) with
 
@@ -204,7 +204,7 @@ The answer is YES 💪
 
 The only means of communication is done via postMessages.
 Therefore the preview only needs to know which postMessage format to use.
-Also postMessage is a native function so every framework or system can use them.
+Also, postMessage is a native function so every framework or system can use them.
 
 ### Two builds (continued)
 
@@ -349,7 +349,35 @@ var _privateField = new WeakMap();
 And it works 💪
 It only compiles the private fields and not everything 👌
 
-However, if you now go back to chrome you will see that it is now compiled there as well...
+However, if you now go back to chrome you will see that it is now compiled there as well.
+The reason for it is that once you start going through babel it just does it's thing based on `@babel/preset-env` and babel is always on the conservative side.
+Therefore if you are concerned about speed it is best to only rely on stage 4 features and to not use babel at all.
+If you really need you can have 2 start commands
+
+```json
+"start": "es-dev-server --open",
+"start:babel": "es-dev-server --babel --open",
+```
+
+However, the real magic happens when you open an older browser like IE11.
+As then it will compile it down to [systemjs](https://github.com/systemjs/systemjs).
+
+It will look something like this
+
+```js
+System.register([], function(_export, _context)) {
+  "use strict";
+
+  var MyClass, _privateField;
+
+  function _classCallback(instance, Constructor) {
+// ...
+```
+
+But it will still work 💪
+
+So what es-dev-server auto mode enables is that you don't need to think about it.
+It will be instant on modern browsers and will even work in these moments where you have a need to test in older browsers.
 
 To summarize in order to be able to work and debug code in all the browser we want to support we basically have 2 options.
 
@@ -358,14 +386,13 @@ To summarize in order to be able to work and debug code in all the browser we wa
 
 And as always please don't go crazy with new features.
 Use what is currently stable and available on your development browser.
-
-Note: You can even open it in IE11 and it will look like a lot more code but it will still work 💪
+You will have the best experience when you do not use a custom babel config.
 
 > The code here shows only the most relevant information
 > For a demo and more details look in the [EsDevServer-vs-WebpackDevServer](./EsDevServer-vs-WebpackDevServer) folder
 > You can start it via `npm run start`, `npm run start:babel` and `npm run webpack`
 
-### Sourcemaps
+### Source maps
 
 Luckily in most cases, even when working with compiled code you will see the source code.
 How is that possible? It's all thanks to [Sourcemaps](https://blog.teamtreehouse.com/introduction-source-maps).
@@ -413,7 +440,11 @@ Prebuilt has the following downsides:
 
 ### Replace webpack magic
 
-`require.context` is used in `preview.js` to define which stories are loaded this is, however, a feature only available in `webpack` so we replaced it with a command-line argument.
+In the current storybook `require.context` is used in `preview.js` to define which stories are loaded.
+This is, however, a feature only available in `webpack` which basically means it is a lock in to a specific build tool.
+We would like to free ourself to choose whatever we want so this needs to be replaced.
+
+We opted for a command-line argument.
 
 In short instead of defining where to look for stories in your js you now do it on the command line via
 
@@ -421,7 +452,7 @@ In short instead of defining where to look for stories in your js you now do it 
 start-storybook --stories 'path/to/stories/*.stories.{js,mdx}'
 ```
 
-Doing so allows exposing this value for various tools like `koa-middlewares` and `rollup`.
+Doing so allows exposing this value to various tools like `koa-middlewares` and `rollup`.
 
 ### Mimic how the preview communicates with the manager
 
@@ -438,7 +469,7 @@ We do some special caching to make sure your browser only ever loads the storybo
 For the preview, it is a little more as we need to load/register all the individual stories as shown in the postMessage example.
 The list of stories we will get via the command line argument.
 
-The important bits which end up being used by the browser is a dynamic import of all story files and then calling storybook to configure which will trigger a postMessage.
+The important bits which end up being used by the browser is a dynamic import of all story files and then calling storybooks configure which will trigger a postMessage.
 
 ```js
 import { configure } from './node_modules/@open-wc/demoing-storybook/index.js';
@@ -453,9 +484,48 @@ Promise.all([
 
 ##### Extra mdx support
 
-With the next version of storybook 5.3 docs mode will become the primary mode of writing documentation with demos on the same page.
+The upcoming storybook 5.3.x (currently in beta) will introduce docs mode.
+A special mode which allows writing markdown together with stories in a single file and it will be displayed on a single page.
+You can think of it as Markdown but on steroids 😬
 
-For that, we added a koa middleware which converts mdx to CSF whenever a `.mdx` file gets requested.
+The format is called mdx and allows to write markdown but also to import javascript and write jsx.
+
+We recommend it as the primary way to write documentation about your components.
+
+In order to support such a feature es-dev-server needs to understand how to handle an mdx file.
+
+For that, we added a [koa middleware](https://github.com/open-wc/open-wc/blob/demoing-storybook%401.0.9/packages/demoing-storybook/src/shared/createMdxToJsTransformer.js) which converts requests to `*.mdx` files into the [CSF](https://storybook.js.org/docs/formats/component-story-format/)(Component Story Format).
+
+It basically means when you request `http://localhost:8001/stories/demo-wc-card.stories.mdx` and the file look like this on the file system:
+
+```md
+###### Header
+
+<Story name="Custom Header">
+  {html`
+    <demo-wc-card header="Harry Potter">A character that is part of a book series...</demo-wc-card>
+  `}
+</Story>
+```
+
+it will server something like this to your browser
+
+```js
+// ...
+mdx('h6', null, `Header`);
+// ...
+export const customHeader = () => html`
+  <demo-wc-card header="Harry Potter">A character that is part of a book series...</demo-wc-card>
+`;
+customHeader.story = {};
+customHeader.story.name = 'Custom Header';
+customHeader.story.parameters = {
+  mdxSource:
+    'html`\n    <demo-wc-card header="Harry Potter">A character that is part of a book series...</demo-wc-card>\n  `',
+};
+```
+
+You can just open your Network Panel and look at the response 💪
 
 #### Use rollup to build a static storybook
 
@@ -482,7 +552,7 @@ A fully-featured demo system that
 - starts up lightning-fast
 - has a prebuilt UI (in es5)
 - serves preview code based on browser capabilities
-- uses `es-dev-server` under the hood so you can use all it's features
+- uses `es-dev-server` under the hood so you can use all its features
 
 And above all, it's just wonderful to see how a completely separate server can power storybook.
 The storybook setup is really worth it 👍
