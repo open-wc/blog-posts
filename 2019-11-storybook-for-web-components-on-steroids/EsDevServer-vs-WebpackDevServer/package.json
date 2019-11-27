@@ -1,9 +1,15 @@
 {
   "scripts": {
     "start": "es-dev-server --open",
-    "start:webpack": "webpack-dev-server --open"
+    "start:babel": "es-dev-server --babel --open",
+    "webpack": "webpack-dev-server --open"
   },
   "dependencies": {
+    "@babel/core": "^7.7.4",
+    "@babel/plugin-proposal-class-properties": "^7.7.4",
+    "@babel/plugin-syntax-class-properties": "^7.7.4",
+    "@babel/preset-env": "^7.7.4",
+    "babel-loader": "^8.0.6",
     "es-dev-server": "^1.26.1",
     "html-webpack-plugin": "^3.2.0",
     "webpack": "^4.41.2",

@@ -1,10 +1,8 @@
 export class MyClass {
-  constructor() {
-    this.message = 'MyClass loaded and instantiated';
-  }
+  #privateField = 'My Class with a private field';
 
   publicMethod() {
-    document.body.innerHTML = this.message;
+    document.body.innerHTML = this.#privateField;
     debugger;
   }
 }

@@ -61,18 +61,29 @@ To get an idea about why this might be needed we first need to understand some o
 
 ### Excursion universal demo system
 
-Let's assume we have a very simple demo system build with vue. Now if I would like to demo a react or angular components how would that work?
+Let's assume we are a startup and we are creating a new app.
+Our choice of technology is vue. We happily start building our app and soon we see the need of having a demo system to show and work on all these individual components. Go forth they said and we built a demo system for vue.
 
 ::TODO: make vue demo::
 
-So the issue is that having the demo UI and the component demo on the same page will mean you can only create demos for the system that the UI provides.
-That sure sounds scary as that would mean every framework needs to come up with their own demo system 😭
+Everything works, everyone is happy - life is good.
 
-But what if we could split the UI and the demo?
+Fast forward 12 month and we got a new CIO. A new wind is blowing and with it - the prosperous opportunity to work on a second app.
+The bries however demands that this time it is written in Angular. No, problem - we are professionals and off we go working on the new app.
+Pretty early we see a similar pattern as before - components everywhere and we need a way to work and demo them individually.
+Ah we think that's easy we already have a system for that 😬
+We give our best - but the angular components just don't wanna work well together with the vue demo app 😭.
 
-We can use iframes and communicate via postMessage 🤞
+What can we do? Do we really need to recreate the demo system for Angular now?
 
-Let's make a simple example with
+It seems our issue is that having the demo UI and the component demo on the same page results that we can only use the demo UI system.
+Not very universal that is 😅
+Could we split the UI and the demo?
+
+How about using iframes and only communicate via postMessage?
+Would that mean each windows can do what they like? 🤞
+
+Let's make a simple POC (Prove of Concept) with
 
 - a ul/li list as a menu
 - an iframe to show the demo
@@ -132,11 +143,17 @@ Here is the `iframe.html`
 > For a demo and more details look in the [postMessage](./postMessage) folder
 > You can start it via `npm i && npm run start`
 
-With such a setup you are totally free to combine any number of systems for UI and actual component demos.
+Now imagine that the UI is way more then just a ul/li list and that the demo follows a certain demo format?
+Could this be a system which allows the UI and the demo to be written in completely different technologies?
+
+The answer is YES 💪
+
+The only means of communication is done via postMessages.
+Therefore the preview only needs to know which postMessage to send and as those are native js every framework or system can use them.
 
 ### Two builds (continued)
 
-So as you saw in storybook there are actually 2 applications being used. One is the storybook UI (called manager) and one is your actual demo (called preview). Knowing that it makes sense that there are 2 separate builds.
+The above concept is what is used by storybook which means that there are actually 2 applications being run. One is the storybook UI (called manager) and one is your actual demo (called preview). Knowing that it makes sense that there are 2 separate builds.
 
 But why is there a build step at all?
 
@@ -145,45 +162,10 @@ But why is there a build step at all?
 
 However, shipping es5 code to a modern browser increases the bundle size unnecessarily and can make debugging more complicated in certain cases.
 
-Let's consider this example which has a debugger when triggering the toggle.
+### Excursion shipping code based on browser capabilities
 
-```js
-class DemoWcCard() {
-  // ...
-  toggle() {
-    debugger;
-    this.backSide = !this.backSide;
-  }
-  // ...
-}
-```
-
-Now when clicking the card the following code will actually be executed in your browser
-
-```js
-_createClass(DemoWcCard, [
-  // ...
-  {
-    key: 'toggle',
-    value: function toggle() {
-      debugger;
-      this.backSide = !this.backSide;
-    },
-  },
-  // ...
-]);
-```
-
-Luckily in most cases, you will not see the raw es5 code as storybook/webpack does a good job of providing sourcemaps.
-[Sourcemaps](https://blog.teamtreehouse.com/introduction-source-maps) are a way to show the original code even though the browser actually executes something else.
-
-It is really awesome that it justs works. It is however yet another moving part that may break or you need to know about at least.
-
-So the question is why not just ship the source if the browser understands it?
-
-## Excursion shipping modern code
-
-Let's have a very small file
+Let's have a small example where we are using [private class fields](https://github.com/tc39/proposal-class-fields).
+This feature is currently at stage 3 and only available in Chrome.
 
 ```js
 // index.js
@@ -194,43 +176,147 @@ inst.publicMethod();
 
 // MyClass.js
 export class MyClass {
-  constructor() {
-    this.message = 'MyClass loaded and instantiated';
-  }
+  #privateField = 'My Class with a private field';
 
   publicMethod() {
-    document.body.innerHTML = this.message;
+    document.body.innerHTML = this.#privateField;
     debugger;
   }
 }
 ```
 
-and open it with webpack - by default sourcemaps are not enabled so you will see
+We deliberately put a debugger breakpoint in there to see the actual code the browser is executing.
+
+Lets see how webpack with a few babel plugins handles it. ([see full config](./EsDevServer-vs-WebpackDevServer/webpack.config.js))
 
 ```js
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, 'MyClass', function() {
-  return MyClass;
-});
-class MyClass {
-  constructor() {
-    this.message = 'MyClass loaded and instantiated';
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MyClass", function() { return MyClass; });
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) {
+// ... more helper functions
+
+var MyClass =
+/*#__PURE__*/
+function () {
+  function MyClass() {
+    _classCallCheck(this, MyClass);
+
+    _privateField.set(this, {
+      writable: true,
+      value: 'My Class with a private field'
+    });
   }
 
+  _createClass(MyClass, [{
+    key: "publicMethod",
+    value: function publicMethod() {
+      document.body.innerHTML = _classPrivateFieldGet(this, _privateField);
+      debugger;
+    }
+  }]);
+
+  return MyClass;
+}();
+
+var _privateField = new WeakMap();
+```
+
+Wow that is quite some code 🙈 and it does not really look like the code written 😱
+
+what happens? in a typical webpack & babel setup your code gets compiled down to es5 in order to be able to run the code also on older browser like IE11.
+
+However you may ask how often do I actually run my app in an older browser?
+
+A typical developer should probably develop ~90% on a modern browser and ~10% on older browsers to make sure everything still works in order.
+At least we hope you have such a nice workflow 🤗
+
+So the question is why compile, ship, debug and work with this "strange" code 100% of the time if it's only needed for 10%?
+Could we do better?
+
+Lets see how `es-dev-server` handles it by opening the same file on chrome.
+
+```js
+export class MyClass {
+  #privateField = 'My Class with a private field';
+
   publicMethod() {
-    document.body.innerHTML = this.message;
+    document.body.innerHTML = this.#privateField;
     debugger;
   }
 }
 ```
 
-When opening the same page in a modern browser with es-dev-server you see exactly\* the source code.
+It looks exactly as the original code - because it is. The code as is was fully capable to run in chrome without any adjustments.
+And that's what is happening it ships the source as is.
 
-\*only bare module imports are resolved if needed
+However we are using private class fields an unsupported feature by for example Firefox.
+What happens if we open it there?
+
+it fails 😭
+
+> SyntaxError: private fields are not currently supported
+
+ok, it's our fault as we are using a stage 3 feature and are not doing any compilation now.
+
+so let's do `es-dev-server --babel` which now uses the same `.babelrc` as webpack.
+
+```js
+function _classPrivateFieldGet(receiver, privateMap) {
+  var descriptor = privateMap.get(receiver);
+  if (!descriptor) {
+    throw new TypeError('attempted to get private field on non-instance');
+  }
+  if (descriptor.get) {
+    return descriptor.get.call(receiver);
+  }
+  return descriptor.value;
+}
+
+export class MyClass {
+  constructor() {
+    _privateField.set(this, {
+      writable: true,
+      value: 'My Class with a private field',
+    });
+  }
+
+  publicMethod() {
+    document.body.innerHTML = _classPrivateFieldGet(this, _privateField);
+    debugger;
+  }
+}
+
+var _privateField = new WeakMap();
+```
+
+So now it work 💪
+It only compiles the private fields and not everything 👍
+
+However if you now go back to chrome you will see that it is now compiled there as well...
+
+To summarize in order to be able to work and debug code in all the browser we want to support we basically have 2 options.
+
+1. Compile down to the lowest denominator
+2. Serve code base on browser capabilities
+
+And as always please don't go crazy with new features.
+Use what is currently stable and available on your development browser.
+
+Note: You can even open it in IE11 and it will look like a lot more code but it will still work 💪
 
 > The code here shows only the most relevant information
 > For a demo and more details look in the [EsDevServer-vs-WebpackDevServer](./EsDevServer-vs-WebpackDevServer) folder
-> You can start it via `npm i && npm run start` and `npm run start:storybook`
+> You can start it via `npm run start`, `npm run start:babel` and `npm run webpack`
+
+### Sourcemaps
+
+Luckily in most cases, you will not see the raw es5 code as storybook/webpack does a good job of providing sourcemaps.
+[Sourcemaps](https://blog.teamtreehouse.com/introduction-source-maps) are a way to show the original code even though the browser actually executes something else.
+
+It is really awesome that it justs works. It is however yet another moving part that may break or you need to know about at least.
+
+So the question is why not just ship the source if the browser understands it?
 
 ## Opportunity
 
@@ -328,3 +414,26 @@ For more details on how the different versions are shipped from a static server 
 > For a full demo see the [storybookOnSteroids](./storybookOnSteroids) folder
 > You can start it via `npm i && npm run storybook`
 > For the actual source code see [@open-wc/demoing-storybook](https://github.com/open-wc/open-wc/tree/master/packages/demoing-storybook)
+
+### Verdict
+
+We did it 💪
+
+A fully featured demo system that
+
+- is buildless on modern browsers
+- starts up lightning fast
+- has a prebuilt UI (in es5)
+- serves preview code based on browser capabilities
+
+And above all it's just wonderful to see how a complete separate server can still power storybook.
+The storybook setup is really worth it 👍
+
+PS: it's not all roses and rainbows but with that step we now know that it is possible - further improvements like a smaller preview bundle or seprate packages for the mdx transformation will happen at some point 🤗
+
+#### Future
+
+We hope that this can be a starting point so storybook can directly support other framework servers as well 👍
+Even none JavaScript servers could be possible - Ruby, PHP are you ready? 🤗
+
+If you are interested in supporting your frameworks server and you need help/guidance be sure to let us know.
