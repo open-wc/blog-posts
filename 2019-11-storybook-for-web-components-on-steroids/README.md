@@ -1,7 +1,7 @@
 ---
 title: Storybook for web components on steroids
 published: false
-description: Writing demos...
+description: Building an application requires many parts and storybook can help you manage it. Here we explore how to optimize storybook for web components.
 tags: javascript, webcomponents, storybook, demos
 ---
 
@@ -19,7 +19,7 @@ There are however some parts in storybook which are not fine-tuned for developin
 
 Let's look at some of those points and how we can improve them.
 
-After a [typical setup](http://putlink) a workflow looks like this.
+After a typical storybook setup it looks like this
 
 ```bash
 $ start-storybook
@@ -42,7 +42,7 @@ webpack built b6c5b0bf4e5f02d4df8c in 7853ms
 # browser opens
 ```
 
-When we compare this to an open-wc typical setup with es-dev-server
+When we compare this to starting a project with `npm init @open-wc`
 
 ```bash
 $ npm run start
@@ -206,7 +206,7 @@ The only means of communication is done via postMessages.
 Therefore the preview only needs to know which postMessage format to use.
 Also, postMessage is a native function so every framework or system can use them.
 
-### Two builds (continued)
+## Two builds (continued)
 
 The above concept is what is used by storybook - which means that there are actually 2 applications being run.
 One is the storybook UI (called manager) and one is your actual demo (called preview).
@@ -216,7 +216,7 @@ But why is there a build step at all? Why would storybook have such setup?
 
 Let's see what is needed to allow for some code to be run and worked on in multiple browsers.
 
-### Excursion shipping code based on browser capabilities
+## Excursion shipping code based on browser capabilities
 
 Let's have a small example where we are using [private class fields](https://github.com/tc39/proposal-class-fields).
 This feature is currently at stage 3 and only available in Chrome.
@@ -392,7 +392,7 @@ You will have the best experience when you do not use a custom babel config.
 > For a demo and more details look in the [EsDevServer-vs-WebpackDevServer](./EsDevServer-vs-WebpackDevServer) folder
 > You can start it via `npm run start`, `npm run start:babel` and `npm run webpack`
 
-### Source maps
+## Source maps
 
 Luckily in most cases, even when working with compiled code you will see the source code.
 How is that possible? It's all thanks to [Sourcemaps](https://blog.teamtreehouse.com/introduction-source-maps).
@@ -482,7 +482,7 @@ Promise.all([
 });
 ```
 
-##### Extra mdx support
+#### Extra mdx support
 
 The upcoming storybook 5.3.x (currently in beta) will introduce docs mode.
 A special mode which allows writing markdown together with stories in a single file and it will be displayed on a single page.
@@ -527,7 +527,7 @@ customHeader.story.parameters = {
 
 You can just open your Network Panel and look at the response 💪
 
-#### Use rollup to build a static storybook
+### Use rollup to build a static storybook
 
 In most cases, you will also want to publish your storybook someone on a static server.
 For that, we pre-setup a rollup configuration and which does all of the above and outputs 2 versions.
@@ -542,7 +542,7 @@ For more details on how the different versions are shipped from a static server 
 > You can start it via `npm i && npm run storybook`
 > For the actual source code see [@open-wc/demoing-storybook](https://github.com/open-wc/open-wc/tree/master/packages/demoing-storybook)
 
-### Verdict
+## Verdict
 
 We did it 💪
 
@@ -559,9 +559,18 @@ The storybook setup is really worth it 👍
 
 PS: it's not all roses and rainbows but with that step, we now know that it is possible - further improvements like a smaller preview bundle or separate packages for the mdx transformation will happen at some point 🤗
 
-#### Future
+## Future
 
 We hope that this can be a starting point so storybook can directly support other framework servers as well 👍
 Even non JavaScript servers could be possible - Ruby, PHP are you ready? 🤗
 
 If you are interested in supporting your frameworks server and you need help/guidance be sure to let us know.
+
+## Acknowledgements
+
+Follow us on [Twitter](https://twitter.com/openwc), or follow me on my personal [Twitter](https://twitter.com/dakmor).
+Make sure to check out our other tools and recommendations at [open-wc.org](https://open-wc.org).
+
+Thanks to [Benny](https://dev.to/bennypowers), [Lars](https://github.com/LarsDenBakker) and [Pascal](https://twitter.com/passle_) for feedback and helping turn my scribbles to a followable story.
+
+Photo by [Nong Vang](https://unsplash.com/@californong) on [Unsplash](https://unsplash.com/)
