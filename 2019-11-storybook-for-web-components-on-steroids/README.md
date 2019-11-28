@@ -425,7 +425,7 @@ Here is the master plan
 
 ## Storybook on steroids
 
-### Prebuilt storybook
+### Prebuild storybook
 
 In order to get an es module version of the storybook preview, it needs to go through webpack & rollup.
 Yes, it is a little black magic but that was the only way that worked.
