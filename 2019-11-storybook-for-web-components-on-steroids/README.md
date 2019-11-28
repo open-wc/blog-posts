@@ -20,7 +20,9 @@ There are however some parts in storybook which are not fine-tuned for developin
 
 Let's look at some of those points and how we can improve them.
 
-After a typical storybook setup it looks like this
+> You can follow along in the [accompanying github repo](https://github.com/open-wc/blog-posts/tree/master/2019-11-storybook-for-web-components-on-steroids)
+
+After a typical storybook setup it looks like [this](https://github.com/open-wc/blog-posts/tree/master/2019-11-storybook-for-web-components-on-steroids/storybook)
 
 ```bash
 $ start-storybook
@@ -120,14 +122,14 @@ It could look something like this
 ```
 
 > The code here shows only the most relevant information
-> For a demo and more details look in the [vue-demo-system](./vue-demo-system) folder
+> For a demo and more details look in the [vue-demo-system](https://github.com/open-wc/blog-posts/tree/master/2019-11-storybook-for-web-components-on-steroids/vue-demo-system) folder
 > You can start it via `npm i && npm run serve`
 
 Everything works, everyone is happy - life is good.
 
-Fast forward 12 months and we got a new CIO. A new wind is blowing and with it a prosperous opportunity to work on a second app. The breeze, however, demands that this time it is written in Angular. No, problem - we are professionals and off we go working on the new app. 
-Pretty early we see a similar pattern as before - components everywhere and we need a way to work and demo them individually. 
-Ah we think that's easy we already have a system for that 😬 
+Fast forward 12 months and we got a new CIO. A new wind is blowing and with it a prosperous opportunity to work on a second app. The breeze, however, demands that this time it is written in Angular. No, problem - we are professionals and off we go working on the new app.
+Pretty early we see a similar pattern as before - components everywhere and we need a way to work and demo them individually.
+Ah we think that's easy we already have a system for that 😬
 
 We give our best - but the angular components just don't wanna work well together with the vue demo app 😭.
 
@@ -197,7 +199,7 @@ Here is the `iframe.html`
 ```
 
 > The code here shows only the most relevant information
-> For a demo and more details look in the [postMessage](./postMessage) folder
+> For a demo and more details look in the [postMessage](https://github.com/open-wc/blog-posts/tree/master/2019-11-storybook-for-web-components-on-steroids/postMessage) folder
 > You can start it via `npm i && npm run start`
 
 Now imagine that the UI is way more than just a ul/li list and that the demo follows a certain demo format?
@@ -244,7 +246,7 @@ export class MyClass {
 
 We deliberately put a debugger breakpoint in there to see the actual code the browser is executing.
 
-Let's see how webpack with a few babel plugins handles it. ([see full config](./EsDevServer-vs-WebpackDevServer/webpack.config.js))
+Let's see how webpack with a few babel plugins handles it. ([see full config](https://github.com/open-wc/blog-posts/tree/master/2019-11-storybook-for-web-components-on-steroids/EsDevServer-vs-WebpackDevServer/webpack.config.js))
 
 ```js
 __webpack_require__.r(__webpack_exports__);
@@ -281,7 +283,7 @@ var _privateField = new WeakMap();
 
 Wow that is quite some code 🙈 and it does not really look like the code written 😱
 
-> Note: in most cases you will not see this because of [source maps](./#source-maps)
+> Note: in most cases you will not see this because of [source maps](#source-maps)
 
 What happened? in a typical webpack & babel setup your code gets compiled down to es5 in order to be able to run the code also on older browser like IE11.
 
@@ -395,7 +397,7 @@ Use what is currently stable and available on your development browser.
 You will have the best experience when you do not use a custom babel config.
 
 > The code here shows only the most relevant information
-> For a demo and more details look in the [EsDevServer-vs-WebpackDevServer](./EsDevServer-vs-WebpackDevServer) folder
+> For a demo and more details look in the [EsDevServer-vs-WebpackDevServer](https://github.com/open-wc/blog-posts/tree/master/2019-11-storybook-for-web-components-on-steroids/EsDevServer-vs-WebpackDevServer) folder
 > You can start it via `npm run start`, `npm run start:babel` and `npm run webpack`
 
 ## Source maps
@@ -544,7 +546,7 @@ For that, we pre-setup a rollup configuration and which does all of the above an
 For more details on how the different versions are shipped from a static server please see the [open-wc rollup recommendation](https://open-wc.org/building/building-rollup.html#configuration).
 
 > The code here shows only the most relevant information
-> For a full demo see the [storybookOnSteroids](./storybookOnSteroids) folder
+> For a full demo see the [storybookOnSteroids](https://github.com/open-wc/blog-posts/tree/master/2019-11-storybook-for-web-components-on-steroids/storybookOnSteroids) folder
 > You can start it via `npm i && npm run storybook`
 > For the actual source code see [@open-wc/demoing-storybook](https://github.com/open-wc/open-wc/tree/master/packages/demoing-storybook)
 
@@ -563,6 +565,10 @@ A fully-featured demo system that
 And above all, it's just wonderful to see how a completely separate server can power storybook.
 The storybook setup is really worth it 👍
 
+- You can check it out in the [open-wc repo](https://github.com/open-wc/open-wc/tree/master/packages/demoing-storybook)
+- See a live example at [https://open-wc.org/demoing-storybook/](https://open-wc.org/demoing-storybook/)
+- And read the documentation [documentation](https://open-wc.org/demoing/)
+
 PS: it's not all roses and rainbows but with that step, we now know that it is possible - further improvements like a smaller preview bundle or separate packages for the mdx transformation will happen at some point 🤗
 
 ## Future
@@ -579,4 +585,4 @@ Make sure to check out our other tools and recommendations at [open-wc.org](http
 
 Thanks to [Benny](https://dev.to/bennypowers) and [Lars](https://github.com/LarsDenBakker) for feedback and helping turn my scribbles to a followable story.
 
-Photo by [Nong Vang](https://unsplash.com/@californong) on [Unsplash](https://unsplash.com/)
+Cover Photo by [Nong Vang](https://unsplash.com/@californong) on [Unsplash](https://unsplash.com/)
