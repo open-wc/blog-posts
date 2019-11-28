@@ -3,6 +3,7 @@ title: Storybook for web components on steroids
 published: false
 description: Building an application requires many parts and storybook can help you manage it. Here we explore how to optimize storybook for web components.
 tags: javascript, webcomponents, storybook, demos
+cover_image: https://github.com/open-wc/blog-posts/blob/2019-11-storybook-for-web-components/2019-11-storybook-for-web-components-on-steroids/images/nong-vang-9pw4TKvT3po-unsplash.jpg?raw=true
 ---
 
 Building a web application is quite a big and challenging task.
@@ -62,9 +63,11 @@ To get an idea about why this might be needed we first need to understand some o
 ## Excursion universal demo system
 
 Let's assume we are a startup and we are creating a new app.
-Our choice of technology is vue. We happily start building our app and soon we see the need of having a demo system to show and work on all these individual components. Go forth they said and we built a demo system for vue.
+Our choice of technology is [Vue.js](https://vuejs.org/). We happily start building our app and soon we see the need of having a demo system to show and work on all these individual components. Go forth they said and we built a demo system for vue.
 
 It could look something like this
+
+> just some example code - don't read this as good vue code 😅
 
 ```html
 <template>
@@ -122,10 +125,10 @@ It could look something like this
 
 Everything works, everyone is happy - life is good.
 
-Fast forward 12 months and we got a new CIO. A new wind is blowing and with it a prosperous opportunity to work on a second app.
-The breeze, however, demands that this time it is written in Angular. No, problem - we are professionals and off we go working on the new app.
-Pretty early we see a similar pattern as before - components everywhere and we need a way to work and demo them individually.
-Ah we think that's easy we already have a system for that 😬
+Fast forward 12 months and we got a new CIO. A new wind is blowing and with it a prosperous opportunity to work on a second app. The breeze, however, demands that this time it is written in Angular. No, problem - we are professionals and off we go working on the new app. 
+Pretty early we see a similar pattern as before - components everywhere and we need a way to work and demo them individually. 
+Ah we think that's easy we already have a system for that 😬 
+
 We give our best - but the angular components just don't wanna work well together with the vue demo app 😭.
 
 What can we do? Do we really need to recreate the demo system for Angular now?
@@ -278,6 +281,8 @@ var _privateField = new WeakMap();
 
 Wow that is quite some code 🙈 and it does not really look like the code written 😱
 
+> Note: in most cases you will not see this because of [source maps](./#source-maps)
+
 What happened? in a typical webpack & babel setup your code gets compiled down to es5 in order to be able to run the code also on older browser like IE11.
 
 However, you may ask how often do I actually run my app in an older browser?
@@ -351,15 +356,8 @@ It only compiles the private fields and not everything 👌
 
 However, if you now go back to chrome you will see that it is now compiled there as well.
 The reason for it is that once you start going through babel it just does it's thing based on `@babel/preset-env` and babel is always on the conservative side.
-Therefore if you are concerned about speed it is best to only rely on stage 4 features and to not use babel at all.
-If you really need you can have 2 start commands
 
-```json
-"start": "es-dev-server --open",
-"start:babel": "es-dev-server --babel --open",
-```
-
-However, the real magic happens when you open an older browser like IE11.
+The real magic ✨ happens when you open it on an older browser like IE11.
 As then it will compile it down to [systemjs](https://github.com/systemjs/systemjs), a polyfill for es modules.
 
 It will look something like this
@@ -375,6 +373,14 @@ System.register([], function(_export, _context)) {
 ```
 
 It will behave exactly like real es modules, so that your code will work just fine on browsers which don't support them 💪
+
+If you are concerned about speed it is best to only rely on stage 4 features and to not use babel at all.
+You can if really needed use 2 start commands
+
+```
+"start": "es-dev-server --open",
+"start:babel": "es-dev-server --babel --open",
+```
 
 So what es-dev-server auto mode enables is that you don't need to think about it.
 It will be instant on modern browsers and will even work in these moments where you have a need to test in older browsers.
@@ -494,7 +500,7 @@ We recommend it as the primary way to write documentation about your components.
 
 In order to support such a feature es-dev-server needs to understand how to handle an mdx file.
 
-For that, we added a [koa middleware](https://github.com/open-wc/open-wc/blob/demoing-storybook%401.0.9/packages/demoing-storybook/src/shared/createMdxToJsTransformer.js) which converts requests to `*.mdx` files into the [CSF](https://storybook.js.org/docs/formats/component-story-format/)(Component Story Format).
+For that, we added a [koa middleware](https://github.com/open-wc/open-wc/blob/demoing-storybook%401.0.9/packages/demoing-storybook/src/shared/createMdxToJsTransformer.js) which converts requests to `*.mdx` files into the [CSF](https://storybook.js.org/docs/formats/component-story-format/) (Component Story Format).
 
 It basically means when you request `http://localhost:8001/stories/demo-wc-card.stories.mdx` and the file look like this on the file system:
 
@@ -508,7 +514,7 @@ It basically means when you request `http://localhost:8001/stories/demo-wc-card.
 </Story>
 ```
 
-it will server something like this to your browser
+it will server this to your browser
 
 ```js
 // ...
@@ -529,7 +535,7 @@ You can just open your Network Panel and look at the response 💪
 
 ### Use rollup to build a static storybook
 
-In most cases, you will also want to publish your storybook someone on a static server.
+In most cases, you will also want to publish your storybook somewhere on a static server.
 For that, we pre-setup a rollup configuration and which does all of the above and outputs 2 versions.
 
 1. for modern browsers who support es modules and
@@ -571,6 +577,6 @@ If you are interested in supporting your frameworks server and you need help/gui
 Follow us on [Twitter](https://twitter.com/openwc), or follow me on my personal [Twitter](https://twitter.com/dakmor).
 Make sure to check out our other tools and recommendations at [open-wc.org](https://open-wc.org).
 
-Thanks to [Benny](https://dev.to/bennypowers), [Lars](https://github.com/LarsDenBakker) and [Pascal](https://twitter.com/passle_) for feedback and helping turn my scribbles to a followable story.
+Thanks to [Benny](https://dev.to/bennypowers) and [Lars](https://github.com/LarsDenBakker) for feedback and helping turn my scribbles to a followable story.
 
 Photo by [Nong Vang](https://unsplash.com/@californong) on [Unsplash](https://unsplash.com/)
