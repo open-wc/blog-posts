@@ -1,6 +1,6 @@
 ---
 title: Storybook for web components on steroids
-published: false
+published: true
 description: Building an application requires many parts and storybook can help you manage it. Here we explore how to optimize storybook for web components.
 tags: javascript, webcomponents, storybook, demos
 cover_image: https://github.com/open-wc/blog-posts/blob/2019-11-storybook-for-web-components/2019-11-storybook-for-web-components-on-steroids/images/nong-vang-9pw4TKvT3po-unsplash.jpg?raw=true
