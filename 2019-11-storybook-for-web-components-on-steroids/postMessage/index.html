@@ -1,0 +1,22 @@
+<ul id="menu"></ul>
+<iframe id="iframe" src="./iframe.html"></iframe>
+
+<script>
+  const menu = document.getElementById('menu');
+  const iframe = document.getElementById('iframe');
+  window.addEventListener('message', ev => {
+    if (!ev.data) {
+      return;
+    }
+
+    const li = document.createElement('li');
+    li.innerText = ev.data.name;
+    li.setAttribute('data-slug', ev.data.slug);
+
+    li.addEventListener('click', ev => {
+      const slug = ev.target.getAttribute('data-slug');
+      iframe.src = `./iframe.html?slug=${slug}`;
+    });
+    menu.appendChild(li);
+  });
+</script>
