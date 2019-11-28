@@ -9,11 +9,11 @@ Building a web application is quite a big and challenging task.
 As with many big tasks, it makes sense to break them into smaller pieces.
 For applications, this usually means splitting your application into multiple separate components.
 
-Once you start doing that you will notice that you will have a lot of individual pieces in your hand and that it can be tough to keep an overview of all these moving parts.
+Once you start doing that you will notice that you have a lot of individual pieces in your hands, and that it can be tough to keep an overview of all these moving parts.
 
 To solve this we have been recommending [storybook](http://storybook.org) since quite some time.
 
-The support for web components has always been good (via `@storybook/polymer`) and have gotten even better with the recently added `@storybook/web-components`.
+The support for web components has always been good (via `@storybook/polymer`), and it got even better with the recently added `@storybook/web-components`.
 
 There are however some parts in storybook which are not fine-tuned for developing web components (the open-wc way).
 
@@ -137,7 +137,7 @@ Could we split the UI and the demo?
 How about using iframes and only communicate via postMessage?
 Would that mean each window can do what they want? 🤞
 
-Let's make a simple POC (Prove of Concept) with
+Let's make a simple POC (proof of concept) with
 
 - a ul/li list as a menu
 - an iframe to show the demo
@@ -278,7 +278,7 @@ var _privateField = new WeakMap();
 
 Wow that is quite some code 🙈 and it does not really look like the code written 😱
 
-what happens? in a typical webpack & babel setup your code gets compiled down to es5 in order to be able to run the code also on older browser like IE11.
+What happened? in a typical webpack & babel setup your code gets compiled down to es5 in order to be able to run the code also on older browser like IE11.
 
 However, you may ask how often do I actually run my app in an older browser?
 
@@ -301,7 +301,7 @@ export class MyClass {
 }
 ```
 
-It looks exactly as the original code - because it is. The code as is was fully capable to run in chrome without any adjustments.
+It looks exactly as the original code - because it is. The code as is was fully capable of running in chrome without any adjustments.
 And that's what is happening it ships the source as is.
 
 However, we are using private class fields which is an unsupported feature for example on Firefox.
@@ -360,7 +360,7 @@ If you really need you can have 2 start commands
 ```
 
 However, the real magic happens when you open an older browser like IE11.
-As then it will compile it down to [systemjs](https://github.com/systemjs/systemjs).
+As then it will compile it down to [systemjs](https://github.com/systemjs/systemjs), a polyfill for es modules.
 
 It will look something like this
 
@@ -374,12 +374,12 @@ System.register([], function(_export, _context)) {
 // ...
 ```
 
-But it will still work 💪
+It will behave exactly like real es modules, so that your code will work just fine on browsers which don't support them 💪
 
 So what es-dev-server auto mode enables is that you don't need to think about it.
 It will be instant on modern browsers and will even work in these moments where you have a need to test in older browsers.
 
-To summarize in order to be able to work and debug code in all the browser we want to support we basically have 2 options.
+To summarize in order to be able to work with and debug code in all the browser we want to support we basically have 2 options.
 
 1. Compile down to the lowest denominator
 2. Serve code base on browser capabilities
@@ -403,7 +403,7 @@ It is really awesome that it justs works. It is however yet another moving part 
 
 ## Opportunity
 
-So looking at compilation and shipping of modern code we a window of an opportunity.
+So looking at compilation and shipping of modern code we see a window of opportunity.
 We want to have the features of storybook but we also want to have the ease of use of not relying on webpack.
 
 In short, the idea is to marry storybook ui with es-dev-server.
@@ -412,7 +412,7 @@ Let's get started 💪
 
 Here is the master plan
 
-1. prebuilt storybook ui (so we are not forced to use webpack)
+1. Prebuild storybook ui (so we are not forced to use webpack)
 2. Replace webpack magic like `require.context`
 3. Mimic how the preview communicates with the manager
 4. Use rollup to build a static version of storybook
@@ -548,9 +548,9 @@ We did it 💪
 
 A fully-featured demo system that
 
-- is build less on modern browsers
+- is buildless on modern browsers
 - starts up lightning-fast
-- has a prebuilt UI (in es5)
+- has a prebuilt UI
 - serves preview code based on browser capabilities
 - uses `es-dev-server` under the hood so you can use all its features
 
@@ -562,6 +562,6 @@ PS: it's not all roses and rainbows but with that step, we now know that it is p
 #### Future
 
 We hope that this can be a starting point so storybook can directly support other framework servers as well 👍
-Even none JavaScript servers could be possible - Ruby, PHP are you ready? 🤗
+Even non JavaScript servers could be possible - Ruby, PHP are you ready? 🤗
 
 If you are interested in supporting your frameworks server and you need help/guidance be sure to let us know.
