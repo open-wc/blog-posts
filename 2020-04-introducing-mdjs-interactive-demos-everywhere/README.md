@@ -1,6 +1,6 @@
 ---
 title: Introducing mdjs - interactive demos everywhere
-published: false
+published: true
 description: Combine markdown and javascript to create the ultimate documentation to allow interactive demos everywhere.
 tags: markdown, javascript, webcomponents, demos
 cover_image: https://raw.githubusercontent.com/open-wc/blog-posts/master/2020-04-introducing-mdjs-interactive-demos-everywhere/images/aaron-burden-TNlHf4m4gpI-unsplash.jpg
@@ -281,7 +281,7 @@ As it's not supported by github directly you will need a chrome extension called
 - Do you want to see a demo without opening a different page? mdjs-viewer!
 - Do you want to show a live example of the issue you are having? mdjs-viewer!
 
-==> INSERT SCREENSHOT/GIF/VIDEO <==
+{% youtube gfecZUYtxv4 %}
 
 Almost looks like black magic, huh?
 All you did was install a Chrome extension and suddenly Github got superpowers.
